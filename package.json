@@ -1,0 +1,26 @@
+{
+  "name": "arkanoid",
+  "version": "1.0.0",
+  "description": "",
+  "main": "arkanoid.js",
+  "scripts": {
+    "build": "babel src -d lib",
+    "watch": "babel src --watch -d lib",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amadevBox/arkanoid.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amadevBox/arkanoid/issues"
+  },
+  "homepage": "https://github.com/amadevBox/arkanoid#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1"
+  }
+}
