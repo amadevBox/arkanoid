@@ -69,21 +69,47 @@ class Platform {
       Platform.height,
     )
   }
+
+  movePlatformByEvent(e) {
+    const modifier = 1
+    switch(e.keyCode) {
+      case 37: {
+        this.x -= Platform.speed * modifier
+        break
+      }
+      case 39: {
+        this.x += Platform.speed * modifier
+        break
+      }
+    }
+  }
 }
 
 Platform.width = 100
 Platform.height = 10
 Platform.color = '#ff0000'
+Platform.speed = 10
+
+const render = (
+  ctx,
+  tiles,
+  platform,
+) => {
+  ctx.clearRect(0, 0, fieldWidth, fieldHeight)
+  drawTiles(tiles, ctx)
+  platform.draw(ctx)
+  requestAnimationFrame(() => render(ctx, tiles, platform))
+}
 
 window.onload = () => {
   const canvas = document.getElementById('tutorial')
   const ctx = canvas.getContext('2d')
 
   const tiles = []
-
   generateTiles(tiles)
-  drawTiles(tiles, ctx)
-
   const platform = new Platform()
-  platform.draw(ctx)
+
+  render(ctx, tiles, platform)
+
+  addEventListener('keydown', platform.movePlatformByEvent.bind(platform))
 }
