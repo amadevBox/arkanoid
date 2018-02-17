@@ -4,7 +4,9 @@ const numberOfRows = 3
 const tilesInRow = 10
 const sizeOfGap = 5
 
-class Tile {
+const requestAnimationFrame = window.requestAnimationFrame
+
+  class Tile {
   constructor(x, y) {
     this.x = x
     this.y = y
@@ -52,6 +54,27 @@ const drawTiles = (tiles, ctx) => {
   }
 }
 
+class Platform {
+  constructor() {
+    this.x = (fieldWidth - Platform.width) / 2
+    this.y = fieldHeight - Platform.height
+  }
+
+  draw(ctx) {
+    ctx.fillStyle = Platform.color
+    ctx.fillRect(
+      this.x,
+      this.y,
+      Platform.width,
+      Platform.height,
+    )
+  }
+}
+
+Platform.width = 100
+Platform.height = 10
+Platform.color = '#ff0000'
+
 window.onload = () => {
   const canvas = document.getElementById('tutorial')
   const ctx = canvas.getContext('2d')
@@ -60,4 +83,7 @@ window.onload = () => {
 
   generateTiles(tiles)
   drawTiles(tiles, ctx)
+
+  const platform = new Platform()
+  platform.draw(ctx)
 }
