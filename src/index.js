@@ -54,6 +54,7 @@ const drawTiles = (tiles, ctx) => {
   }
 }
 
+
 class Platform {
   constructor() {
     this.x = (fieldWidth - Platform.width) / 2
@@ -90,15 +91,55 @@ Platform.height = 10
 Platform.color = '#ff0000'
 Platform.speed = 10
 
+
+class Boll {
+  constructor() {
+    this.x = fieldWidth / 2
+    this.y = fieldHeight - Boll.radius - Platform.height
+  }
+
+  move() {
+    this.x++
+    this.y++
+  }
+
+  draw(ctx) {
+    ctx.beginPath()
+    ctx.arc(
+      this.x,
+      this.y,
+      Boll.radius,
+      0,
+      2 * Math.PI,
+      false
+    )
+    ctx.fillStyle = Boll.color
+    ctx.fill()
+  }
+}
+
+Boll.color = '#00ff00'
+Boll.radius = 20
+
+
 const render = (
   ctx,
   tiles,
   platform,
+  boll,
 ) => {
   ctx.clearRect(0, 0, fieldWidth, fieldHeight)
   drawTiles(tiles, ctx)
   platform.draw(ctx)
-  requestAnimationFrame(() => render(ctx, tiles, platform))
+  boll.draw(ctx)
+  // boll.move()
+  requestAnimationFrame(() => render(
+      ctx,
+      tiles,
+      platform,
+      boll,
+    )
+  )
 }
 
 window.onload = () => {
@@ -109,7 +150,14 @@ window.onload = () => {
   generateTiles(tiles)
   const platform = new Platform()
 
-  render(ctx, tiles, platform)
+  const boll = new Boll()
+
+  render(
+    ctx,
+    tiles,
+    platform,
+    boll
+  )
 
   addEventListener('keydown', platform.movePlatformByEvent.bind(platform))
 }
