@@ -36,6 +36,7 @@ Tile.color = 'rgba(0, 0, 200, 0.5)'
 Tile.width = fieldWidth / tilesInRow - 2 * sizeOfGap
 Tile.height = 25
 
+
 const generateTiles = () => {
   const tiles = []
   for (let i = 0; i < numberOfRows; i++) {
@@ -48,6 +49,7 @@ const generateTiles = () => {
   }
   return tiles
 }
+
 
 const drawTiles = (tiles, ctx) => {
   for (let i = 0; i < numberOfRows; i++) {
@@ -119,8 +121,6 @@ class Boll {
     ctx.fillStyle = Boll.color
     ctx.fill()
   }
-
-
 }
 
 Boll.color = '#00ff00'
@@ -135,18 +135,19 @@ const core = ({
 }) => {
   if (boll.y <= Boll.radius) {
     Boll.speed = -Boll.speed
-    // boll.angle += Math.PI
     return
   }
+
   if (boll.y >= fieldHeight - Boll.radius) {
-    boll.angle *= -1
-    // const shift = (platform.x + (Platform.width / 2) - boll.x) / (Platform.width / 2)
-    // const newAngle = Math.PI + shift * 3
-    // console.log('newAngle', newAngle)
-    // boll.angle += Math.PI
+    //boll.angle *= -1
+    const shift = (platform.x + (Platform.width / 2) - boll.x) / (Platform.width / 2)
+    const shiftCoef = (shift / 2) + 0.5
+    boll.angle = -(shiftCoef * (Math.PI / 2) + Math.PI / 4)
     return
   }
-  if ((boll.x <= Boll.radius) ||
+
+  if (
+    (boll.x <= Boll.radius) ||
     (boll.x >= fieldWidth - Boll.radius)
   ) {
     boll.angle = Math.PI - boll.angle
@@ -156,18 +157,20 @@ const core = ({
   for (let tilesRow of tiles) {
     for (let tile of tilesRow) {
       if (!tile.isAlive) continue
-      if (boll.x - Boll.radius <= tile.x + Tile.width &&
-          boll.x + Boll.radius >= tile.x &&
-          boll.y - Boll.radius <= tile.y + Tile.height &&
-          boll.y + Boll.radius >= tile.y)
-      {
-          tile.isAlive = false
-          boll.angle *= -1
-          return
+      if (
+        boll.x - Boll.radius <= tile.x + Tile.width &&
+        boll.x + Boll.radius >= tile.x &&
+        boll.y - Boll.radius <= tile.y + Tile.height &&
+        boll.y + Boll.radius >= tile.y
+      ) {
+        tile.isAlive = false
+        boll.angle *= -1
+        return
       }
     }
   }
 }
+
 
 const render = (ctx, arkanoid) => {
   const {
@@ -177,11 +180,11 @@ const render = (ctx, arkanoid) => {
   } = arkanoid
 
   boll.y += (Boll.speed * Math.sin(boll.angle))
-  // console.log(Boll.speed * Math.sin(boll.angle))
   boll.x += (Boll.speed * Math.cos(boll.angle))
 
-  ctx.clearRect(0, 0, fieldWidth, fieldHeight)
   core(arkanoid)
+
+  ctx.clearRect(0, 0, fieldWidth, fieldHeight)
   drawTiles(tiles, ctx)
   platform.draw(ctx)
   boll.draw(ctx)
@@ -194,6 +197,7 @@ const render = (ctx, arkanoid) => {
 
 var t;
 
+
 window.onload = () => {
   const canvas = document.getElementById('tutorial')
   const ctx = canvas.getContext('2d')
@@ -203,8 +207,6 @@ window.onload = () => {
     platform: new Platform(),
     boll: new Boll(),
   }
-
-  console.log('arkanoid', arkanoid)
 
   addEventListener(
     'keydown',
