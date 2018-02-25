@@ -2,7 +2,7 @@ const fieldHeight = 400
 const fieldWidth = 500
 const numberOfRows = 3
 const tilesInRow = 8
-const sizeOfGap = 5
+const sizeOfGap = 3
 
 const requestAnimationFrame = window.requestAnimationFrame
 
@@ -125,25 +125,36 @@ class Boll {
 
 Boll.color = '#00ff00'
 Boll.radius = 8
-Boll.speed = 5
+Boll.speed = 4
 
 
-const core = ({
-  boll,
-  platform,
-  tiles,
-}) => {
+const core = (arkanoid) => {
+  const {
+    boll,
+    platform,
+    tiles,
+  } = arkanoid
+
   if (boll.y <= Boll.radius) {
     Boll.speed = -Boll.speed
     return
   }
 
-  if (boll.y >= fieldHeight - Boll.radius) {
-    //boll.angle *= -1
-    const shift = (platform.x + (Platform.width / 2) - boll.x) / (Platform.width / 2)
-    const shiftCoef = (shift / 2) + 0.5
-    boll.angle = -(shiftCoef * (Math.PI / 2) + Math.PI / 4)
-    return
+  if (boll.y >= fieldHeight - Platform.height - Boll.radius) {
+    if (
+      (boll.x + (Boll.radius * 2) >= platform.x) &&
+      (boll.x - (Boll.radius * 2) <= platform.x + Platform.width)
+    ) {
+      //boll.angle *= -1
+      const shift = (platform.x + (Platform.width / 2) - boll.x) / (Platform.width / 2)
+      const shiftCoef = (shift / 2) + 0.5
+      boll.angle = -(shiftCoef * (Math.PI / 2) + Math.PI / 4)
+      return
+    } else if (boll.y >= fieldHeight - Boll.radius) {
+      arkanoid.status = 'finish'
+      arkanoid.finish()
+      return
+    }
   }
 
   if (
@@ -182,20 +193,17 @@ const render = (ctx, arkanoid) => {
   boll.y += (Boll.speed * Math.sin(boll.angle))
   boll.x += (Boll.speed * Math.cos(boll.angle))
 
-  core(arkanoid)
-
   ctx.clearRect(0, 0, fieldWidth, fieldHeight)
   drawTiles(tiles, ctx)
   platform.draw(ctx)
   boll.draw(ctx)
 
-  var t2 = new Date()
-  if (t2 - t < 100000) {
+  core(arkanoid)
+
+  if (arkanoid.status === 'play') {
     requestAnimationFrame(() => render(ctx, arkanoid))
   }
 }
-
-var t;
 
 
 window.onload = () => {
@@ -206,13 +214,18 @@ window.onload = () => {
     tiles: generateTiles(),
     platform: new Platform(),
     boll: new Boll(),
+    status: 'play',
+    finish: () => {
+      ctx.font = '50px Arial'
+      ctx.fillStyle = 'red'
+      ctx.textAlign = 'center'
+      ctx.fillText('Game Over', fieldWidth / 2, fieldHeight / 2)
+    },
   }
 
   addEventListener(
     'keydown',
     arkanoid.platform.movePlatformByEvent.bind(arkanoid.platform)
   )
-
-  t = new Date();
   render(ctx, arkanoid)
 }
